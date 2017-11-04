@@ -22,13 +22,12 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
-
-define(function (require) {
     "use strict";
 
     var FontScale = require('fontscale');
     var monaco = require('monaco');
     var options = require('options');
+    var _ = require('underscore');
 
     require('asm-mode');
     require('selectize');
@@ -178,7 +177,6 @@ define(function (require) {
         });
     };
 
-    return {
+    module.exports = {
         Opt: Opt
     };
-});

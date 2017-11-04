@@ -21,218 +21,212 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+"use strict";
+function definition() {
+    return {
+        defaultToken: 'invalid',
 
-define(function (require) {
-    "use strict";
-    var monaco = require('monaco');
+        keywords: [
+            'abstract',
+            'alias',
+            'align',
+            'asm',
+            'assert',
+            'auto',
+            'body',
+            'bool',
+            'break',
+            'byte',
+            'case',
+            'cast',
+            'catch',
+            'cdouble',
+            'cent',
+            'cfloat',
+            'char',
+            'class',
+            'const',
+            'continue',
+            'creal',
+            'dchar',
+            'debug',
+            'default',
+            'delegate',
+            'delete ',
+            'deprecated',
+            'do',
+            'double',
+            'else',
+            'enum',
+            'export',
+            'extern',
+            'false',
+            'final',
+            'finally',
+            'float',
+            'for',
+            'foreach',
+            'foreach_reverse',
+            'function',
+            'goto',
+            'idouble',
+            'if',
+            'ifloat',
+            'immutable',
+            'import',
+            'in',
+            'inout',
+            'int',
+            'interface',
+            'invariant',
+            'ireal',
+            'is',
+            'lazy',
+            'long',
+            'macro',
+            'mixin',
+            'module',
+            'new',
+            'nothrow',
+            'null',
+            'out',
+            'override',
+            'package',
+            'pragma',
+            'private',
+            'protected',
+            'public',
+            'pure',
+            'real',
+            'ref',
+            'return',
+            'scope',
+            'shared',
+            'short',
+            'static',
+            'struct',
+            'super',
+            'switch',
+            'synchronized',
+            'template',
+            'this',
+            'throw',
+            'true',
+            'try',
+            'typedef',
+            'typeid',
+            'typeof',
+            'ubyte',
+            'ucent',
+            'uint',
+            'ulong',
+            'union',
+            'unittest',
+            'ushort',
+            'version',
+            'void',
+            'volatile',
+            'wchar',
+            'while',
+            'with',
+            '__FILE__',
+            '__FILE_FULL_PATH__',
+            '__MODULE__',
+            '__LINE__',
+            '__FUNCTION__',
+            '__PRETTY_FUNCTION__',
+            '__gshared',
+            '__traits',
+            '__vector',
+            '__parameters'],
 
-    function definition() {
-        return {
-            defaultToken: 'invalid',
+        typeKeywords: [
+            'bool', 'byte', 'ubyte', 'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'char', 'wchar', 'dchar',
+            'float', 'double', 'real', 'ifloat', 'idouble', 'ireal', 'cfloat', 'cdouble', 'creal', 'void'
+        ],
 
-            keywords: [
-                'abstract',
-                'alias',
-                'align',
-                'asm',
-                'assert',
-                'auto',
-                'body',
-                'bool',
-                'break',
-                'byte',
-                'case',
-                'cast',
-                'catch',
-                'cdouble',
-                'cent',
-                'cfloat',
-                'char',
-                'class',
-                'const',
-                'continue',
-                'creal',
-                'dchar',
-                'debug',
-                'default',
-                'delegate',
-                'delete ',
-                'deprecated',
-                'do',
-                'double',
-                'else',
-                'enum',
-                'export',
-                'extern',
-                'false',
-                'final',
-                'finally',
-                'float',
-                'for',
-                'foreach',
-                'foreach_reverse',
-                'function',
-                'goto',
-                'idouble',
-                'if',
-                'ifloat',
-                'immutable',
-                'import',
-                'in',
-                'inout',
-                'int',
-                'interface',
-                'invariant',
-                'ireal',
-                'is',
-                'lazy',
-                'long',
-                'macro',
-                'mixin',
-                'module',
-                'new',
-                'nothrow',
-                'null',
-                'out',
-                'override',
-                'package',
-                'pragma',
-                'private',
-                'protected',
-                'public',
-                'pure',
-                'real',
-                'ref',
-                'return',
-                'scope',
-                'shared',
-                'short',
-                'static',
-                'struct',
-                'super',
-                'switch',
-                'synchronized',
-                'template',
-                'this',
-                'throw',
-                'true',
-                'try',
-                'typedef',
-                'typeid',
-                'typeof',
-                'ubyte',
-                'ucent',
-                'uint',
-                'ulong',
-                'union',
-                'unittest',
-                'ushort',
-                'version',
-                'void',
-                'volatile',
-                'wchar',
-                'while',
-                'with',
-                '__FILE__',
-                '__FILE_FULL_PATH__',
-                '__MODULE__',
-                '__LINE__',
-                '__FUNCTION__',
-                '__PRETTY_FUNCTION__',
-                '__gshared',
-                '__traits',
-                '__vector',
-                '__parameters'],
+        operators: [
+            '=', '>', '<', '!', '~', '?', ':',
+            '==', '<=', '>=', '!=', '&&', '||', '++', '--',
+            '+', '-', '*', '/', '&', '|', '^', '%', '<<',
+            '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=',
+            '^=', '%=', '<<=', '>>=', '>>>='
+        ],
 
-            typeKeywords: [
-                'bool', 'byte', 'ubyte', 'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'char', 'wchar', 'dchar',
-                'float', 'double', 'real', 'ifloat', 'idouble', 'ireal', 'cfloat', 'cdouble', 'creal', 'void'
+        // we include these common regular expressions
+        symbols: /[=><!~?:&|+\-*\/^%]+/,
+        escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+
+        // The main tokenizer for our languages
+        tokenizer: {
+            root: [
+                // identifiers and keywords
+                [/[a-z_$][\w$]*/, {
+                    cases: {
+                        '@typeKeywords': 'keyword',
+                        '@keywords': 'keyword',
+                        '@default': 'identifier'
+                    }
+                }],
+                [/[A-Z][\w$]*/, 'type.identifier'],  // to show class names nicely
+
+                // whitespace
+                {include: '@whitespace'},
+
+                // delimiters and operators
+                [/[{}()\[\]]/, '@brackets'],
+                [/[<>](?!@symbols)/, '@brackets'],
+                [/@symbols/, {
+                    cases: {
+                        '@operators': 'operator',
+                        '@default': ''
+                    }
+                }],
+
+                // numbers
+                [/\d*\.\d+([eE][\-+]?\d+)?[fFdD]?/, 'number.float'],
+                [/0[xX][0-9a-fA-F_]*[0-9a-fA-F][Ll]?/, 'number.hex'],
+                [/0[0-7_]*[0-7][Ll]?/, 'number.octal'],
+                [/0[bB][0-1_]*[0-1][Ll]?/, 'number.binary'],
+                [/\d+[lL]?/, 'number'],
+
+                // delimiter: after number because of .\d floats
+                [/[;,.]/, 'delimiter'],
+
+                // strings
+                [/"([^"\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
+                [/"/, 'string', '@string'],
+
+                // characters
+                [/'[^\\']'/, 'string'],
+                [/(')(@escapes)(')/, ['string', 'string.escape', 'string']],
+                [/'/, 'string.invalid']
             ],
 
-            operators: [
-                '=', '>', '<', '!', '~', '?', ':',
-                '==', '<=', '>=', '!=', '&&', '||', '++', '--',
-                '+', '-', '*', '/', '&', '|', '^', '%', '<<',
-                '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=',
-                '^=', '%=', '<<=', '>>=', '>>>='
+            whitespace: [
+                [/[ \t\r\n]+/, 'white'],
+                [/\/\*/, 'comment', '@comment'],
+                [/\/\+/, 'comment', '@comment'],
+                [/\/\/.*$/, 'comment'],
             ],
 
-            // we include these common regular expressions
-            symbols: /[=><!~?:&|+\-*\/^%]+/,
-            escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+            comment: [
+                [/[^\/*]+/, 'comment'],
+                [/\/\+/, 'comment', '@push'],
+                [/\/\*/, 'comment.invalid'],
+                ["\\*/", 'comment', '@pop'],
+                ["\\+/", 'comment', '@pop'],
+                [/[\/*]/, 'comment']
+            ],
 
-            // The main tokenizer for our languages
-            tokenizer: {
-                root: [
-                    // identifiers and keywords
-                    [/[a-z_$][\w$]*/, {
-                        cases: {
-                            '@typeKeywords': 'keyword',
-                            '@keywords': 'keyword',
-                            '@default': 'identifier'
-                        }
-                    }],
-                    [/[A-Z][\w$]*/, 'type.identifier'],  // to show class names nicely
-
-                    // whitespace
-                    {include: '@whitespace'},
-
-                    // delimiters and operators
-                    [/[{}()\[\]]/, '@brackets'],
-                    [/[<>](?!@symbols)/, '@brackets'],
-                    [/@symbols/, {
-                        cases: {
-                            '@operators': 'operator',
-                            '@default': ''
-                        }
-                    }],
-
-                    // numbers
-                    [/\d*\.\d+([eE][\-+]?\d+)?[fFdD]?/, 'number.float'],
-                    [/0[xX][0-9a-fA-F_]*[0-9a-fA-F][Ll]?/, 'number.hex'],
-                    [/0[0-7_]*[0-7][Ll]?/, 'number.octal'],
-                    [/0[bB][0-1_]*[0-1][Ll]?/, 'number.binary'],
-                    [/\d+[lL]?/, 'number'],
-
-                    // delimiter: after number because of .\d floats
-                    [/[;,.]/, 'delimiter'],
-
-                    // strings
-                    [/"([^"\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
-                    [/"/, 'string', '@string'],
-
-                    // characters
-                    [/'[^\\']'/, 'string'],
-                    [/(')(@escapes)(')/, ['string', 'string.escape', 'string']],
-                    [/'/, 'string.invalid']
-                ],
-
-                whitespace: [
-                    [/[ \t\r\n]+/, 'white'],
-                    [/\/\*/, 'comment', '@comment'],
-                    [/\/\+/, 'comment', '@comment'],
-                    [/\/\/.*$/, 'comment'],
-                ],
-
-                comment: [
-                    [/[^\/*]+/, 'comment'],
-                    [/\/\+/, 'comment', '@push'],
-                    [/\/\*/, 'comment.invalid'],
-                    ["\\*/", 'comment', '@pop'],
-                    ["\\+/", 'comment', '@pop'],
-                    [/[\/*]/, 'comment']
-                ],
-
-                string: [
-                    [/[^\\"]+/, 'string'],
-                    [/@escapes/, 'string.escape'],
-                    [/\\./, 'string.escape.invalid'],
-                    [/"/, 'string', '@pop']
-                ],
-            }
-        };
-    }
-
-    monaco.languages.register({id: 'd'});
-    monaco.languages.setMonarchTokensProvider('d', definition());
-});
+            string: [
+                [/[^\\"]+/, 'string'],
+                [/@escapes/, 'string.escape'],
+                [/\\./, 'string.escape.invalid'],
+                [/"/, 'string', '@pop']
+            ],
+        }
+    };
+}
+monaco.languages.register({id: 'd'});
+monaco.languages.setMonarchTokensProvider('d', definition());

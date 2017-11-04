@@ -1,10 +1,12 @@
 *.swp
 /node_modules
 /.npm-updated
-/.bower-updated
 *.vscode
 /out
 *.heapsnapshot
 etc/config/*.local.properties
 /nbproject
 /package-lock.json
+*.bundle*.js
+*.map
+static/dist

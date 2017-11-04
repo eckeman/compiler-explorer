@@ -23,96 +23,94 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-define(function (require) {
-    "use strict";
+"use strict";
 
-    var _ = require('underscore');
-    var FontScale = require('fontscale');
+var _ = require('underscore');
+var FontScale = require('fontscale');
 
-    function Output(hub, container, state) {
-        this.container = container;
-        this.compilerId = state.compiler;
-        this.editorId = state.editor;
-        this.eventHub = hub.createEventHub();
-        this.domRoot = container.getElement();
-        this.domRoot.html($('#compiler-output').html());
-        this.contentRoot = this.domRoot.find(".content");
-        this.compiler = null;
-        this.fontScale = new FontScale(this.domRoot, state, "pre");
+function Output(hub, container, state) {
+    this.container = container;
+    this.compilerId = state.compiler;
+    this.editorId = state.editor;
+    this.eventHub = hub.createEventHub();
+    this.domRoot = container.getElement();
+    this.domRoot.html($('#compiler-output').html());
+    this.contentRoot = this.domRoot.find(".content");
+    this.compiler = null;
+    this.fontScale = new FontScale(this.domRoot, state, "pre");
 
-        this.eventHub.on('compileResult', this.onCompileResult, this);
-        this.eventHub.emit('resendCompilation', this.compilerId);
-        this.eventHub.on('compilerFontScale', this.onFontScale, this);
-        this.eventHub.on('compilerClose', this.onCompilerClose, this);
+    this.eventHub.on('compileResult', this.onCompileResult, this);
+    this.eventHub.emit('resendCompilation', this.compilerId);
+    this.eventHub.on('compilerFontScale', this.onFontScale, this);
+    this.eventHub.on('compilerClose', this.onCompilerClose, this);
 
-        this.updateCompilerName();
+    this.updateCompilerName();
+}
+
+Output.prototype.onCompileResult = function (id, compiler, result) {
+    if (id !== this.compilerId) return;
+    this.compiler = compiler;
+
+    this.contentRoot.empty();
+
+    _.each((result.stdout || []).concat(result.stderr || []), function (obj) {
+        this.add(obj.text, obj.tag ? obj.tag.line : obj.line);
+    }, this);
+
+    this.add("Compiler exited with result code " + result.code);
+
+    if (result.execResult) {
+        var elem = $('<div><hr></div>').appendTo(this.contentRoot);
+        this.add("Output from execution:");
+        _.each((result.execResult.stdout || []).concat(result.execResult.stderr || []), function (obj) {
+            this.add(obj.text, obj.line);
+        }, this);
+        this.add("User code exited with result code " + result.execResult.code);
     }
 
-    Output.prototype.onCompileResult = function (id, compiler, result) {
-        if (id !== this.compilerId) return;
-        this.compiler = compiler;
+    this.updateCompilerName();
+};
 
-        this.contentRoot.empty();
+Output.prototype.onFontScale = function (id, scale) {
+    if (id === this.compilerId) this.fontScale.setScale(scale);
+};
 
-        _.each((result.stdout || []).concat(result.stderr || []), function (obj) {
-            this.add(obj.text, obj.tag ? obj.tag.line : obj.line);
+Output.prototype.add = function (msg, lineNum) {
+    var elem = $('<div></div>').appendTo(this.contentRoot);
+    if (lineNum) {
+        elem.html($('<a href="#">')
+            .text(lineNum + " : " + msg))
+            .click(_.bind(function (e) {
+                this.eventHub.emit('editorSetDecoration', this.editorId, lineNum, true);
+                // do not bring user to the top of index.html
+                // http://stackoverflow.com/questions/3252730
+                e.preventDefault();
+                return false;
+            }, this))
+            .on('mouseover', _.bind(function () {
+                this.eventHub.emit('editorSetDecoration', this.editorId, lineNum, false);
+            }, this));
+    } else {
+        elem.text(msg);
+    }
+};
+
+Output.prototype.updateCompilerName = function () {
+    var name = "#" + this.compilerId;
+    if (this.compiler) name += " with " + this.compiler.name;
+    this.container.setTitle(name);
+};
+
+Output.prototype.onCompilerClose = function (id) {
+    if (id === this.compilerId) {
+        // We can't immediately close as an outer loop somewhere in GoldenLayout is iterating over
+        // the hierarchy. We can't modify while it's being iterated over.
+        _.defer(function (self) {
+            self.container.close();
         }, this);
+    }
+};
 
-        this.add("Compiler exited with result code " + result.code);
-
-        if (result.execResult) {
-            var elem = $('<div><hr></div>').appendTo(this.contentRoot);
-            this.add("Output from execution:");
-            _.each((result.execResult.stdout || []).concat(result.execResult.stderr || []), function (obj) {
-                this.add(obj.text, obj.line);
-            }, this);
-            this.add("User code exited with result code " + result.execResult.code);
-        }
-
-        this.updateCompilerName();
-    };
-
-    Output.prototype.onFontScale = function (id, scale) {
-        if (id === this.compilerId) this.fontScale.setScale(scale);
-    };
-
-    Output.prototype.add = function (msg, lineNum) {
-        var elem = $('<div></div>').appendTo(this.contentRoot);
-        if (lineNum) {
-            elem.html($('<a href="#">')
-                .text(lineNum + " : " + msg))
-                .click(_.bind(function (e) {
-                    this.eventHub.emit('editorSetDecoration', this.editorId, lineNum, true);
-                    // do not bring user to the top of index.html
-                    // http://stackoverflow.com/questions/3252730
-                    e.preventDefault();
-                    return false;
-                }, this))
-                .on('mouseover', _.bind(function () {
-                    this.eventHub.emit('editorSetDecoration', this.editorId, lineNum, false);
-                }, this));
-        } else {
-            elem.text(msg);
-        }
-    };
-
-    Output.prototype.updateCompilerName = function () {
-        var name = "#" + this.compilerId;
-        if (this.compiler) name += " with " + this.compiler.name;
-        this.container.setTitle(name);
-    };
-
-    Output.prototype.onCompilerClose = function (id) {
-        if (id === this.compilerId) {
-            // We can't immediately close as an outer loop somewhere in GoldenLayout is iterating over
-            // the hierarchy. We can't modify while it's being iterated over.
-            _.defer(function (self) {
-                self.container.close();
-            }, this);
-        }
-    };
-
-    return {
-        Output: Output
-    };
-});
+module.exports = {
+    Output: Output
+};

@@ -21,49 +21,20 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-// POSSIBILITY OF SUCH DAMAGE.
-
-require.config({
-    paths: {
-        bootstrap: 'ext/bootstrap/dist/js/bootstrap',
-        jquery: 'ext/jquery/dist/jquery',
-        underscore: 'ext/underscore/underscore',
-        goldenlayout: 'ext/golden-layout/dist/goldenlayout',
-        selectize: 'ext/selectize/dist/js/selectize',
-        sifter: 'ext/sifter/sifter',
-        microplugin: 'ext/microplugin/src/microplugin',
-        events: 'ext/eventEmitter/EventEmitter',
-        lzstring: 'ext/lz-string/libs/lz-string',
-        clipboard: 'ext/clipboard/dist/clipboard',
-        'big-integer': 'ext/big-integer/BigInteger.min',
-        'raven-js': 'ext/raven-js/dist/raven',
-        'es6-promise': 'ext/es6-promise/es6-promise',
-        'lru-cache': 'ext/lru-cache/lib/lru-cache',
-        vs: "ext/monaco-editor/min/vs",
-        'bootstrap-slider': 'ext/seiyria-bootstrap-slider/dist/bootstrap-slider',
-        filesaver: 'ext/file-saver/FileSaver',
-        vis: 'ext/vis/dist/vis.min'
-    },
-    shim: {
-        underscore: {exports: '_'},
-        'lru-cache': {exports: 'LRUCache'},
-        bootstrap: ['jquery'],
-        'bootstrap-slider': ['bootstrap']
-    },
-    waitSeconds: 60
-});
-
-define(function (require) {
-    "use strict";
+// POSSIBILITY OF SUCH DAMAGE
+"use strict";
+require("monaco-loader")().then(function() {    
+    
     require('bootstrap');
     require('bootstrap-slider');
+
     var analytics = require('analytics');
     var sharing = require('sharing');
     var _ = require('underscore');
     var $ = require('jquery');
     var GoldenLayout = require('goldenlayout');
     var Components = require('components');
-    var url = require('url');
+    var url = require('./url');
     var clipboard = require('clipboard');
     var Hub = require('hub');
     var Raven = require('raven-js');
@@ -71,6 +42,15 @@ define(function (require) {
     var local = require('./local');
     var Alert = require('./alert');
     var themer = require('./themes');
+
+    //css
+    require("./colours.css");
+    require("./explorer.css");
+    require("bootstrap/dist/css/bootstrap.min.css");
+    require("goldenlayout/src/css/goldenlayout-base.css")
+    require("selectize/dist/css/selectize.bootstrap2.css");
+    require("bootstrap-slider/dist/css/bootstrap-slider.css");
+
 
     function setupSettings(eventHub) {
         var currentSettings = JSON.parse(local.get('settings', '{}'));
@@ -203,5 +183,6 @@ define(function (require) {
         });
     }
 
-    $(start);
-});
+        $(start);
+    });
+    

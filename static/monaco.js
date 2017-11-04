@@ -23,8 +23,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-define(function (require) {
-    require('vs/editor/editor.main');
 
-    return monaco;
-});
+//its now on the window
+    module.exports = monaco;
+
