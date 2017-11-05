@@ -25,11 +25,10 @@ You can support this [this project on Patreon](https://patreon.com/mattgodbolt).
 
 Compiler Explorer is written in node.js.
 
-Assuming you have npm and node installed, simply running `make` ought to get you up and running with an Explorer
+Assuming you have yarn and node installed, simply running `make` ought to get you up and running with an Explorer
 running on port 10240 on your local machine: http://localhost:10240/
 
-The `Makefile` will automatically install all the third party libraries needed to run; using `npm` to install server-side
-components and `bower` to install all the client-facing libraries.
+The `Makefile` will automatically install all the third party libraries needed to run; using `yarn` to install server-side and client side components
 
 If you want to point it at your own GCC or similar binaries, either edit the `etc/config/compiler-explorer.defaults.properties` or else make a new one with the name
 `compiler-explorer.local.properties`. `*.local.properties` files have the highest priority when loading properties.
