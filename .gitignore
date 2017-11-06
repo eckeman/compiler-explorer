@@ -10,3 +10,4 @@ etc/config/*.local.properties
 *.bundle*.js
 *.map
 static/dist
+static/vs
