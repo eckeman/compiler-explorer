@@ -43,4 +43,4 @@ fi
 
 VERSION=$(${NODE} ${YARNJS} --version)
 
-echo ${NODE} ${YARNJS}
+echo ${NODE} ${YARNJS} > $2

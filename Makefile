@@ -7,14 +7,14 @@ YARN=/not/set/here/if/you/see/this/read/the/makefile
 
 NODE_CMD=.node-path
 $(NODE_CMD): etc/scripts/find-node.sh
-	$< > $@
+	$< $@
 .PHONY: node
 node: $(NODE_CMD)
 	$(eval NODE:=$(shell cat $(NODE_CMD)))
 
 YARN_CMD=.yarn-path
 $(YARN_CMD): etc/scripts/find-yarn.sh | node
-	$< $(NODE) > $@
+	$< $(NODE) $@
 .PHONY: yarn
 yarn: $(YARN_CMD)
 	$(eval YARN:=$(shell cat $(YARN_CMD)))

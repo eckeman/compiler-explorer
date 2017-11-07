@@ -36,4 +36,4 @@ if [[ "${MAJOR_VERSION}" != "${REQUIRED_MAJOR}" ]]; then
     exit 1
 fi
 
-echo ${NODE}
+echo ${NODE} > $1
