@@ -1,20 +1,28 @@
-ifneq "" "$(NODE_DIR)"
-NPM:=$(NODE_DIR)/bin/yarn
-NODE:=$(NODE_DIR)/bin/node
 default: run
-else
-ifeq "" "$(shell which npm)"
-default:
-	@echo "Please install node.js"
-	@echo "Visit http://nodejs.org/ for more details"
-	@echo "On Ubuntu/Debian try: sudo apt-get install nodejs npm"
-	exit 1
-else
-NPM:= $(shell which yarn)
-NODE:= $(shell which node || which nodejs)
-default: run
-endif
-endif
+
+# We use a two-pass approach here to set NODE and YARN. If you have a tool
+# that depends on either, you need to depend on node or yarn, respectively.
+NODE=/not/set/here/if/you/see/this/read/the/makefile
+YARN=/not/set/here/if/you/see/this/read/the/makefile
+
+NODE_CMD=.node-path
+$(NODE_CMD): etc/scripts/find-node.sh
+	$< > $@
+.PHONY: node
+node: $(NODE_CMD)
+	$(eval NODE:=$(shell cat $(NODE_CMD)))
+
+YARN_CMD=.yarn-path
+$(YARN_CMD): etc/scripts/find-yarn.sh | node
+	$< $(NODE) > $@
+.PHONY: yarn
+yarn: $(YARN_CMD)
+	$(eval YARN:=$(shell cat $(YARN_CMD)))
+
+.PHONY: print-config
+print-config: node yarn
+	@echo "Node is '$(NODE)'"
+	@echo "Yarn is '$(YARN)'"
 
 .PHONY: clean run test run-amazon c-preload optional-haskell-support optional-d-support optional-rust-support
 .PHONY: dist lint prereqs node_modules travis-dist
@@ -49,12 +57,12 @@ optional-rust-support:
 endif
 
 
-NODE_MODULES=.npm-updated
-$(NODE_MODULES): package.json
-	$(NPM) install
+NODE_MODULES=.yarn-updated
+$(NODE_MODULES): package.json | yarn
+	$(YARN) install
 	@touch $@
 
-webpack:
+webpack: $(NODE_MODULES)
 	$(NODE) node_modules/webpack/bin/webpack.js 
 
 lint: $(NODE_MODULES)
@@ -70,7 +78,7 @@ test: $(NODE_MODULES) lint
 	@echo Tests pass
 
 clean:
-	rm -rf node_modules .npm-updated out static/dist static/vs
+	rm -rf node_modules $(NODE_MODULES) out static/dist static/vs $(YARN_CMD) $(NODE_CMD)
 	$(MAKE) -C d clean
 	$(MAKE) -C c-preload clean
 

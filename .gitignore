@@ -1,6 +1,9 @@
 *.swp
 /node_modules
 /.npm-updated
+/.yarn-updated
+/.node-path
+/.yarn-path
 *.vscode
 /out
 *.heapsnapshot
